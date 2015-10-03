@@ -23,9 +23,11 @@ class OpauthLoginHooks {
             // Login existing user into system
             $user = OpauthLogin::getUidUser( $uid, $provider );
 
+            wfRunHooks('OpauthLoginUserAuthorized', array( $user, $provider, $uid, $info ) );
+
         }else{
 
-            // Create new user from external data
+            // Create new user from external data, $info refers to https://github.com/opauth/opauth/wiki/Auth-response
 
             /**
              * We set UID based string as user name in mediawiki to avoid
@@ -51,12 +53,23 @@ class OpauthLoginHooks {
             $ssUpdate = new SiteStatsUpdate(0, 0, 0, 0, 1);
             $ssUpdate->doUpdate();
 
+            // Run AddNewAccount hook for proper handling
+            wfRunHooks( 'AddNewAccount', array( $user, false ) );
+
+            wfRunHooks('OpauthLoginUserCreated', array( $user, $provider, $info, $uid ) );
+
         }
 
         // Replace current user with new one
         $wgUser = $user;
         $wgUser->setCookies( null, null, true );
 
+        if( array_key_exists('opauth_returnto', $_SESSION) && isset($_SESSION['opauth_returnto']) ) {
+            $returnToTitle = Title::newFromText( $_SESSION['opauth_returnto'] );
+            unset($_SESSION['opauth_returnto']);
+            $wgOut->redirect( $returnToTitle->getFullURL() );
+            return true;
+        }
         $wgOut->redirect( Title::newMainPage()->getFullURL() );
 
         return true;
