@@ -26,7 +26,7 @@ global $wgOpauthLogin;
 $wgOpauthLoginDir = dirname( __FILE__ );
 
 /* Credits page */
-$wgExtensionCredits['specialpage'][] = array(
+$wgExtensionCredits['other'][] = array(
     'path' => __FILE__,
     'name' => 'OpauthLogin',
     'version' => '0.1',

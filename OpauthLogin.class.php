@@ -73,6 +73,66 @@ class OpauthLogin {
     }
 
     /**
+     * @param integer $user_id
+     * @return bool|integer
+     */
+    public static function getUserUid( $user_id )
+    {
+        $dbr = wfGetDB(DB_SLAVE);
+        $result = $dbr->selectRow(
+            'opauth_login',
+            '*',
+            array(
+                'user_id' => $user_id
+            )
+        );
+        if( $result ) {
+            return $result->uid;
+        }
+        return false;
+    }
+
+    /**
+     * @param integer $user_id
+     * @return bool|integer
+     */
+    public static function getUserProvider( $user_id )
+    {
+        $dbr = wfGetDB(DB_SLAVE);
+        $result = $dbr->selectRow(
+            'opauth_login',
+            '*',
+            array(
+                'user_id' => $user_id
+            )
+        );
+        if( $result ) {
+            return $result->provider;
+        }
+        return false;
+    }
+
+    /**
+     * @param integer $user_id
+     * @return bool|integer
+     */
+    public static function isUserExists( $user_id )
+    {
+        $dbr = wfGetDB(DB_SLAVE);
+        $result = $dbr->selectRow(
+            'opauth_login',
+            '*',
+            array(
+                'user_id' => $user_id
+            )
+        );
+        if( $result ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Checks if there is already user with same email exists in Mediawiki database
      * @param string $email
      * @return bool

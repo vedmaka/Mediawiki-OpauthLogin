@@ -5,7 +5,7 @@ $messages = array();
 
 /* English */
 $messages['en'] = array(
-    'opauthlogin-credits' => ''
+    'opauthlogin-credits' => 'Requires Opauth extension. Allows users to be registered and logged-in via social networks.'
 );
 
 /* Russian */
