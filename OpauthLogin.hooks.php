@@ -29,12 +29,35 @@ class OpauthLoginHooks {
 
             // Create new user from external data, $info refers to https://github.com/opauth/opauth/wiki/Auth-response
 
-            /**
-             * We set UID based string as user name in mediawiki to avoid
-             * user nicknames override and collisions problems. We store external user name into
-             * "real name" field of user object. This should be supported in skin.
-             */
-            $user = User::newFromName( md5( $provider.$uid ) . '_' . $uid, false  );
+	        // Lets try to create with original username first and
+	        // iterate until we will find available name
+
+	        if( User::isValidUserName( $info['name'] ) ) {
+
+	        	// First check if this name can be used at all
+		        // Then check if there are users with same name exists
+
+		        $testUser = User::newFromName( $info['name'] );
+		        $suffix = 0;
+
+		        while( $testUser->getId() !== 0 ) {
+		        	$suffix++;
+			        $testUser = User::newFromName( $info['name'].' '.$suffix );
+		        }
+
+		        // Use found available name
+		        $user = $testUser;
+
+	        }else{
+
+		        /**
+		         * We set UID based string as user name in mediawiki to avoid
+		         * user nicknames override and collisions problems. We store external user name into
+		         * "real name" field of user object. This should be supported in skin.
+		         */
+		        $user = User::newFromName( md5( $provider.$uid ) . '_' . $uid, false  );
+
+	        }
 
             $user->setRealName( $info['name'] );
             if( array_key_exists('email', $info) ) {
@@ -92,5 +115,25 @@ class OpauthLoginHooks {
             $wgOpauthLoginDir .'/schema/opauth_login.sql'
         );
     }
+
+	/**
+	 * @param UsercreateTemplate $template
+	 */
+	public static function onUserCreateForm( &$template ) {
+		global $wgOpauthLoginEnableButtons;
+		if( $wgOpauthLoginEnableButtons ) {
+			$template->set( 'header', OpauthLogin::getButtonsMarkup() );
+		}
+	}
+
+	/**
+	 * @param UserloginTemplate $template
+	 */
+	public static function onUserLoginForm( &$template ) {
+		global $wgOpauthLoginEnableButtons;
+		if( $wgOpauthLoginEnableButtons ) {
+			$template->set( 'header', OpauthLogin::getButtonsMarkup() );
+		}
+	}
 
 }

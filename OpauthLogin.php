@@ -24,6 +24,7 @@ if( !class_exists('Opauth') ) {
 
 global $wgOpauthLogin;
 $wgOpauthLoginDir = dirname( __FILE__ );
+$wgOpauthLoginEnableButtons = true;
 
 /* Credits page */
 $wgExtensionCredits['other'][] = array(
@@ -70,3 +71,5 @@ $wgAutoloadClasses['OpauthLoginHooks'] = dirname( __FILE__ ) . '/OpauthLogin.hoo
 $wgHooks['OpauthUserAuthorized'][] = 'OpauthLoginHooks::onOpauthUserAuthorized';
 $wgHooks['UserLoadFromSession'][] = 'OpauthLoginHooks::onUserLoadFromSession';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'OpauthLoginHooks::onLoadExtensionSchemaUpdates';
+$wgHooks['UserCreateForm'][] = 'OpauthLoginHooks::onUserCreateForm';
+$wgHooks['UserLoginForm'][] = 'OpauthLoginHooks::onUserLoginForm';

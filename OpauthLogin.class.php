@@ -153,4 +153,57 @@ class OpauthLogin {
         return false;
     }
 
+	/**
+	 * Returns markup for login buttons. This method is quite limited to the bootstrap skin
+	 * but fortunately there is a hook which allows to alter this markup
+	 *
+	 * @return string
+	 */
+	public static function getButtonsMarkup( $withText = true ) {
+
+		global $wgOpauthConfig;
+
+		$html = '';
+
+		if( array_key_exists('Strategy', $wgOpauthConfig ) && count($wgOpauthConfig['Strategy']) ) {
+
+			foreach ($wgOpauthConfig['Strategy'] as $name => $strategy) {
+
+				$buttonHtml = '';
+
+				$lowerName = strtolower($name);
+
+				$classes = 'btn btn-sm';
+				$icon = 'fa fa-'.$lowerName;
+
+				if( $lowerName == 'facebook' ) {
+					$classes .= ' btn-info';
+					$icon = 'fa fa-facebook-official';
+				}
+
+				if( $lowerName == 'google' ) {
+					$classes .= ' btn-danger';
+					$icon = 'fa fa-google';
+				}
+
+				$buttonHtml .= '<a href="'.OpauthHelper::getLoginLink($lowerName).'" class="'.$classes.'">';
+				if( $withText ) {
+					$buttonHtml .= wfMessage( 'opauthlogin-link-login-via-text' )->params( $name )->plain();
+				}
+				$buttonHtml .= '&nbsp;<i class="'.$icon.'" aria-hidden="true"></i>';
+				$buttonHtml .= '</a>&nbsp;';
+
+				// Allow extensions to customize buttons markup for each strategy
+				wfRunHooks('OpauthLoginButtonsMarkup', array( $name, $strategy, &$buttonHtml, $withText ) );
+
+				$html .= $buttonHtml;
+
+			}
+
+		}
+
+		return $html;
+
+	}
+
 }
