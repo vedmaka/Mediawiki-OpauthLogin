@@ -30,20 +30,25 @@ class OpauthLoginHooks {
 
             // Create new user from external data, $info refers to https://github.com/opauth/opauth/wiki/Auth-response
 
+	        // Lets try to prepare username for wiki
+	        // try to convert given input into canonical name without any validation
+	        $canonicalName = User::getCanonicalName( $info['name'], 'valid' );
+
 	        // Lets try to create with original username first and
 	        // iterate until we will find available name
 
-	        if( User::isValidUserName( $info['name'] ) ) {
+	        if( $canonicalName && User::isCreatableName( $canonicalName ) ) {
 
 	        	// First check if this name can be used at all
 		        // Then check if there are users with same name exists
 
-		        $testUser = User::newFromName( $info['name'] );
+		        $testUser = User::newFromName( $canonicalName );
 		        $suffix = 0;
 
 		        while( $testUser->getId() !== 0 ) {
 		        	$suffix++;
-			        $testUser = User::newFromName( $info['name'].' '.$suffix );
+		        	// We're free to add suffix since base part of the name was already checked for validity
+			        $testUser = User::newFromName( $canonicalName.' '.$suffix );
 		        }
 
 		        // Use found available name
