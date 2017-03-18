@@ -14,6 +14,7 @@ class OpauthLoginHooks {
         global $wgUser, $wgOut;
 
         // Called when user was successfully authenticated from Opauth
+	    $wasCreated = false;
 
         // This function should compare UID with internal storage and decide to create new account for this user
         // or load existing user from database
@@ -81,19 +82,29 @@ class OpauthLoginHooks {
 
             wfRunHooks('OpauthLoginUserCreated', array( $user, $provider, $info, $uid ) );
 
+	        $wasCreated = true;
+
         }
 
         // Replace current user with new one
         $wgUser = $user;
         $wgUser->setCookies( null, null, true );
 
+        $redirectTarget = Title::newMainPage()->getFullURL();
+
         if( array_key_exists('opauth_returnto', $_SESSION) && isset($_SESSION['opauth_returnto']) ) {
             $returnToTitle = Title::newFromText( $_SESSION['opauth_returnto'] );
             unset($_SESSION['opauth_returnto']);
-            $wgOut->redirect( $returnToTitle->getFullURL() );
-            return true;
+	        $redirectTarget = $returnToTitle->getFullURL();
         }
-        $wgOut->redirect( Title::newMainPage()->getFullURL() );
+
+        // Allow extensions to modify final redirect
+	    // $redirectTarget - URL to redirect user
+	    // $user - authenticated User object
+	    // $wasCreated - flag indicates if user was created or just authenticated during the session
+        wfRunHooks('OpauthLoginFinalRedirect', array( &$redirectTarget, $user, $wasCreated ) );
+
+        $wgOut->redirect( $redirectTarget );
 
         return true;
     }
