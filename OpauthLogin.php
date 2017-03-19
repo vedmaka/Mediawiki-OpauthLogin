@@ -24,7 +24,11 @@ if( !class_exists('Opauth') ) {
 
 global $wgOpauthLogin;
 $wgOpauthLoginDir = dirname( __FILE__ );
-$wgOpauthLoginEnableButtons = true;
+
+// Display login buttons at sign-in page
+$wgOpauthLoginEnableButtons = false;
+// Allow users to manually enter their username
+$wgOpauthLoginRequestUsername = false;
 
 /* Credits page */
 $wgExtensionCredits['other'][] = array(
