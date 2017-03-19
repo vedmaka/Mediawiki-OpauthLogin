@@ -42,11 +42,11 @@ $wgExtensionCredits['other'][] = array(
 
 /* Resource modules */
 $wgResourceModules['ext.OpauthLogin.main'] = array(
-    'localBasePath' => dirname( __FILE__ ) . '/',
-    'remoteExtPath' => 'OpauthLogin/',
+    'localBasePath' => dirname( __FILE__ ) . '/modules/',
+    'remoteExtPath' => 'OpauthLogin/modules/',
     'group' => 'ext.OpauthLogin',
-    'scripts' => '',
-    'styles' => ''
+    'scripts' => array('js/script.js'),
+    'styles' => array('css/style.css')
 );
 
 /* Message Files */
@@ -55,6 +55,7 @@ $wgExtensionMessagesFiles['OpauthLogin'] = dirname( __FILE__ ) . '/OpauthLogin.i
 /* Autoload classes */
 $wgAutoloadClasses['OpauthLogin'] = dirname( __FILE__ ) . '/OpauthLogin.class.php';
 $wgAutoloadClasses['OpauthLoginHooks'] = dirname( __FILE__ ) . '/OpauthLogin.hooks.php';
+$wgAutoloadClasses['SpecialOpauthLoginInfo'] = dirname( __FILE__ ) . '/specials/OpauthLoginInfo.php';
 
 /* ORM,MODELS */
 #$wgAutoloadClasses['OpauthLogin_Model_'] = dirname( __FILE__ ) . '/includes/OpauthLogin_Model_.php';
@@ -69,7 +70,7 @@ $wgAutoloadClasses['OpauthLoginHooks'] = dirname( __FILE__ ) . '/OpauthLogin.hoo
 #$wgGroupPermissions['sysop']['example_rights'] = true;
 
 /* Special Pages */
-#$wgSpecialPages['OpauthLogin'] = 'OpauthLoginSpecial';
+$wgSpecialPages['OpauthLoginInfo'] = 'SpecialOpauthLoginInfo';
 
 /* Hooks */
 $wgHooks['OpauthUserAuthorized'][] = 'OpauthLoginHooks::onOpauthUserAuthorized';
