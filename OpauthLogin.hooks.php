@@ -98,7 +98,7 @@ class OpauthLoginHooks {
 	    $ssUpdate->doUpdate();
 
 	    // Run AddNewAccount hook for proper handling
-	    wfRunHooks( 'AddNewAccount', array( $user, false ) );
+	    wfRunHooks( 'AddNewAccount', array( $user, false, 'opauth' ) );
 
 	    wfRunHooks('OpauthLoginUserCreated', array( $user, $provider, $info, $uid ) );
 
